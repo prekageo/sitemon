@@ -1,0 +1,9 @@
+<ul>
+% for change in diff_results:
+  % if 'link' in change:
+  <li><a href="${change['link']}">${change['title']}</a></li>
+  % else:
+  <li>${change}</li>
+  % endif
+% endfor
+</ul>

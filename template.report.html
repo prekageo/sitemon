@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style>
+.diff {
+  font-family: monospace;
+  font-size: 10px;
+}
+.diff_add {
+  background-color: green;
+}
+.diff_chg {
+  background-color: yellow;
+}
+.diff_header {
+}
+.diff_next {
+}
+.diff_sub {
+  background-color: red;
+}
+</style>
+</head>
+<body>
+  <h1>Unchanged</h1>
+  <ul>
+  % for site in report['unchanged']:
+    <li>
+      <a href="${site['url']}">${site['url']}</a>
+    </li>
+  % endfor
+  </ul>
+  <h1>Changed</h1>
+  <ul>
+  % for site in report['changed']:
+    <li>
+      <a href="${site['url']}">${site['url']}</a>
+      ${site['diff_results']['data']}
+    </li>
+  % endfor
+  </ul>
+</body>
+</html>

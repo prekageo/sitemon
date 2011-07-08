@@ -1,0 +1,15 @@
+authentication:
+  https://www.dropbox.com:
+    method: post
+    url: https://www.dropbox.com/login
+    params:
+      login_email: HIDDEN
+      login_password: HIDDEN
+      remember_me: on
+      t: ''
+sites:
+  - url: https://www.dropbox.com/home
+    diff_engine: Comparison
+    validations:
+      - xpath: //a[contains(@href,"/logout")]
+        should_exist: Yes
