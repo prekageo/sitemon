@@ -175,7 +175,7 @@ class DiffInvision(ForumDiffEngine):
 
 class DiffVBulletin(ForumDiffEngine):
   def process(self, old, new):
-    self.xpath = '//*[@id="threadslist"]/tbody[2]'
+    self.xpath = '//*[@id="threadslist"]/tbody[last()]'
     return self.parse_and_compare(old, new)
 
   def parse_row(self, row):
@@ -191,6 +191,11 @@ class DiffVBulletin(ForumDiffEngine):
 
     return self.topic(link.attrib['href'], link.text, timestamp.text)
 
+class DiffVBulletin4(DiffVBulletin):
+  def process(self, old, new):
+    self.xpath = '//*[@id="threads"]'
+    return self.parse_and_compare(old, new)
+
 class DiffPHPBB(ForumDiffEngine):
   def __init__(self, url, xpath):
     self.xpath = xpath
@@ -204,7 +209,7 @@ class DiffPHPBB(ForumDiffEngine):
     if len(link) == 0:
       return self.no_topic()
     link = link[0]
-    href = re.sub(r'sid=[0-9a-fA-F]+', '', link.attrib['href'])
+    href = re.sub(r'&sid=[0-9a-fA-F]+', '', link.attrib['href'])
     return self.topic(href, link.text, row[4][0].text)
 
 class DiffDNZ(ForumDiffEngine):
@@ -229,4 +234,4 @@ class DiffPcmag(ForumDiffEngine):
     if len(link) == 0:
       return self.no_topic()
     link = link[0]
-    return self.topic(link.attrib['href'], link.text_content(), row[4].text_content())
+    return self.topic(link.attrib['href'], link.text_content(), row[2].text_content())
