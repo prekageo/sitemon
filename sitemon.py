@@ -194,8 +194,12 @@ class Storage:
     c = self.conn.cursor()
     params=(url,timestamp,buffer(zlib.compress(content.encode('utf-8'))))
     c.execute('insert into pages (url,timestamp,content) values (?,?,?)',params)
-    self.conn.commit()
     c.close()
+
+  def commit(self):
+    """ Commit changes into the database. """
+
+    self.conn.commit()
 
   def get_2_most_recent_pages(self, url):
     """
@@ -323,6 +327,7 @@ def main():
       logging.debug('No history available for %s', site['url'])
 
   report_engine.generate_report()
+  storage.commit()
 
 if __name__ == '__main__':
   main()
