@@ -309,7 +309,7 @@ def main():
         conf.get_property('validations', site, []), auth)
       page = b.get_page()
       storage.store_page(site['url'], timestamp, page.decode(conf.get_property(
-        'encoding', site, 'utf-8')))
+        'encoding', site, 'utf-8'), 'replace'))
 
     pages = storage.get_2_most_recent_pages(site['url'])
     if len(pages) == 2:
