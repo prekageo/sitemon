@@ -1,6 +1,7 @@
 """ This module contains difference engines used by the sitemon utility. """
 
 import difflib
+import logging
 import lxml.html
 import mako.template
 import os.path
@@ -157,7 +158,10 @@ class ForumDiffEngine(BaseDiffEngine):
     new -- the new web page.
     """
 
-    changed,diff_results = self.compare(self.parse(old), self.parse(new))
+    parsed_new = self.parse(new)
+    for parsed_new_row in self.parse(old).itervalues():
+      logging.debug('Row: %s, Timestamp: %s', parsed_new_row['title'], parsed_new_row['timestamp'])
+    changed,diff_results = self.compare(self.parse(old), parsed_new)
     if not changed:
       return self.unchanged()
     else:
