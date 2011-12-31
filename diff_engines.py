@@ -113,9 +113,15 @@ class ForumDiffEngine(BaseDiffEngine):
     """
 
     root = lxml.html.fromstring(html)
-    table = root.xpath(self.xpath)[0]
+    tables = root.xpath(self.xpath)
+
+    def all_children(elements):
+      for element in elements:
+        for child in element.iterchildren():
+          yield child
+
     results = {}
-    for row in table.iterchildren():
+    for row in all_children(tables):
       key,value = self.parse_row(row)
       if key is None:
         continue
@@ -193,7 +199,7 @@ class DiffVBulletin(ForumDiffEngine):
 
 class DiffVBulletin4(DiffVBulletin):
   def process(self, old, new):
-    self.xpath = '//*[@id="threads"]'
+    self.xpath = '//*[@id="threads" or @id="stickies"]'
     return self.parse_and_compare(old, new)
 
 class DiffPHPBB(ForumDiffEngine):
