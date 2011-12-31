@@ -207,8 +207,9 @@ class DiffVBulletin4(DiffVBulletin):
     return self.parse_and_compare(old, new)
 
 class DiffPHPBB(ForumDiffEngine):
-  def __init__(self, url, xpath):
+  def __init__(self, url, xpath, xpath_timestamp):
     self.xpath = xpath
+    self.xpath_timestamp = xpath_timestamp
     ForumDiffEngine.__init__(self, url)
 
   def process(self, old, new):
@@ -220,7 +221,7 @@ class DiffPHPBB(ForumDiffEngine):
       return self.no_topic()
     link = link[0]
     href = re.sub(r'&sid=[0-9a-fA-F]+', '', link.attrib['href'])
-    return self.topic(href, link.text, row[4][0].text.strip())
+    return self.topic(href, link.text, row.xpath(self.xpath_timestamp)[0].text_content().strip())
 
 class DiffDNZ(ForumDiffEngine):
   def process(self, old, new):
