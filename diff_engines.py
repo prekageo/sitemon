@@ -220,7 +220,7 @@ class DiffPHPBB(ForumDiffEngine):
       return self.no_topic()
     link = link[0]
     href = re.sub(r'&sid=[0-9a-fA-F]+', '', link.attrib['href'])
-    return self.topic(href, link.text, row[4][0].text)
+    return self.topic(href, link.text, row[4][0].text.strip())
 
 class DiffDNZ(ForumDiffEngine):
   def process(self, old, new):
@@ -232,7 +232,7 @@ class DiffDNZ(ForumDiffEngine):
     if len(link) == 0:
       return self.no_topic()
     link = link[0]
-    return self.topic(link.attrib['href'], link.text, row[1][1].text_content())
+    return self.topic(link.attrib['href'], link.text.strip(), row[1][1][0][0].text_content().strip())
 
 class DiffPcmag(ForumDiffEngine):
   def process(self, old, new):
@@ -244,4 +244,4 @@ class DiffPcmag(ForumDiffEngine):
     if len(link) == 0:
       return self.no_topic()
     link = link[0]
-    return self.topic(link.attrib['href'], link.text_content(), row[2].text_content())
+    return self.topic(link.attrib['href'], link.text_content(), row[2].text_content().strip())
