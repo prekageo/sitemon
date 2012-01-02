@@ -181,7 +181,11 @@ class DiffInvision(ForumDiffEngine):
       return self.no_topic()
     link = link[0]
 
-    return self.topic(link.attrib['href'], link.text, row.xpath('descendant::a[contains(@href,"do=who")]')[0].text)
+    views = row.xpath('descendant::a[contains(@href,"do=who")]')
+    if len(views) == 0:
+      return self.no_topic()
+    else:
+      return self.topic(link.attrib['href'], link.text, views[0].text)
 
 class DiffVBulletin(ForumDiffEngine):
   def process(self, old, new):
