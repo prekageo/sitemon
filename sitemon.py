@@ -315,7 +315,8 @@ def main():
     if len(pages) == 2:
       if options.write_files:
         def clean_filename(suffix):
-          return '%s_%s.html'%(re.sub('[:/?]','_',site['url']),suffix)
+          url = re.sub('[:/?]','_',site['url'])[:200]
+          return '%s_%s.html'%(url,suffix)
         open(clean_filename('old'),'w').write(pages[1].encode('utf8'))
         open(clean_filename('new'),'w').write(pages[0].encode('utf8'))
       diff_engine_params = conf.get_property('diff_engine_params', site, {})
