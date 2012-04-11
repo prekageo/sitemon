@@ -167,15 +167,13 @@ class WebBrowser:
 class Storage:
   """ The Storage class is responsible for handling data persistence. """
 
-  DATABASE_FILE = 'storage.db'
-
-  def __init__(self):
+  def __init__(self, database_file = 'storage.db'):
     """
     Create a new instance of Storage and open the connection to the SQLite
     database.
     """
 
-    self.conn = sqlite3.connect(self.DATABASE_FILE)
+    self.conn = sqlite3.connect(database_file)
     cursor = self.conn.cursor()
     cursor.execute('create table if not exists pages(url text,timestamp text,'\
       'content blob)')
@@ -283,6 +281,15 @@ class ConfParser:
           return v
     return default
 
+  def get_property_simple(self, property_name, default=None):
+    """
+    This method retrieves a simple property configured globally.
+
+    property_name -- the property's name to look for.
+    default -- a default value to return if the property is not defined.
+    """
+    return self.conf.get(property_name, default)
+
 def main():
   parser = optparse.OptionParser()
   parser.add_option('-n', '--no-download', action='store_false',
@@ -294,9 +301,9 @@ def main():
   (options, args) = parser.parse_args()
 
   logging.basicConfig(level=logging.DEBUG)
-  storage = Storage()
-  report_engine = HTMLReport()
   conf = ConfParser('conf.yml')
+  storage = Storage(conf.get_property_simple('database_file'))
+  report_engine = HTMLReport()
 
   timestamp = datetime.datetime.now()
 
