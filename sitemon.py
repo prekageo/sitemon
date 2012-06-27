@@ -212,6 +212,29 @@ class Storage:
     c.close()
     return [zlib.decompress(row[0]).decode('utf-8') for row in results]
 
+  def clean(self):
+    """ Remove old pages from local storage. """
+
+    c = self.conn.cursor()
+    c.execute('select distinct url from pages')
+    for url, in c.fetchall():
+      c2 = self.conn.cursor()
+      c2.execute('select timestamp from pages where url=? order by timestamp desc limit -1 offset 2',(url,))
+      timestamp = c2.fetchone()
+      c2.close()
+      if timestamp == None:
+        continue
+      timestamp,=timestamp
+
+      c3 = self.conn.cursor()
+      c3.execute('delete from pages where url=? and timestamp<=?',(url,timestamp))
+      c3.close()
+
+    c4 = self.conn.cursor()
+    c4.execute('vacuum')
+    c4.close()
+    self.conn.commit()
+
 class HTMLReport:
   """
   The HTMLReport class creates and writes to disk the report in HTML format
@@ -298,12 +321,19 @@ def main():
   parser.add_option('-f', '--write-files', action='store_true',
     dest='write_files', default=False,
     help='Write to disk the 2 most recent pages for every site configured.')
+  parser.add_option('-c', '--clean', action='store_true',
+    dest='clean', default=False,
+    help='Remove old pages from local storage.')
   (options, args) = parser.parse_args()
 
   logging.basicConfig(level=logging.DEBUG)
   conf = ConfParser('conf.yml')
   storage = Storage(conf.get_property_simple('database_file'))
   report_engine = HTMLReport()
+
+  if options.clean:
+    storage.clean()
+    return
 
   timestamp = datetime.datetime.now()
 
